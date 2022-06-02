@@ -539,7 +539,7 @@ fn test_object_ringbuf() {
     unsafe { libc::getpid() };
 
     // This should result in both callbacks being called
-    mgr.poll(Duration::from_millis(100))
+    mgr.poll(Some(Duration::from_millis(100)))
         .expect("Failed to poll ringbuf");
 
     // Our values should both reflect that the callbacks have been called
