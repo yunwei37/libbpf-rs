@@ -38,6 +38,11 @@ impl OpenProgram {
         }
     }
 
+    pub fn set_log_level(&mut self, log_level: u32) -> Result<()> {
+        let ret = unsafe { libbpf_sys::bpf_program__set_log_level(self.ptr, log_level) };
+        util::parse_ret(ret)
+    }
+
     /// Name of the section this `Program` belongs to.
     pub fn section(&self) -> &str {
         &self.section
@@ -232,6 +237,14 @@ impl Program {
         }
     }
 
+    pub fn autoload(&self) -> bool {
+        unsafe { libbpf_sys::bpf_program__autoload(self.ptr) }
+    }
+
+    pub fn log_level(&self) -> u32 {
+        unsafe { libbpf_sys::bpf_program__log_level(self.ptr) }
+    }
+
     /// [Pin](https://facebookmicrosites.github.io/bpf/blog/2018/08/31/object-lifetime.html#bpffs)
     /// this program to bpffs.
     pub fn pin<P: AsRef<Path>>(&mut self, path: P) -> Result<()> {
@@ -418,5 +431,9 @@ impl Program {
     ///
     pub fn insn_cnt(&self) -> usize {
         unsafe { libbpf_sys::bpf_program__insn_cnt(self.ptr) as usize }
+    }
+
+    pub fn unload(&mut self) {
+        unsafe { libbpf_sys::bpf_program__unload(self.ptr) }
     }
 }
